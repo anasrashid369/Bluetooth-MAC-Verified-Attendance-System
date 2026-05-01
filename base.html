@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Bluetooth Attendance{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; background-color: #f8fafc; }
+        .bg-primary { background-color: #1e3a5f; }
+        .text-primary { color: #1e3a5f; }
+        .transition-all { transition: all 0.3s ease; }
+    </style>
+    {% block head %}{% endblock %}
+</head>
+<body class="min-h-screen flex flex-col">
+    <nav class="bg-primary text-white shadow-lg">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between h-16 items-center">
+                <div class="flex items-center space-x-2">
+                    <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01"></path>
+                    </svg>
+                    <span class="text-xl font-bold tracking-tight">BT Attendance</span>
+                </div>
+                <div class="hidden md:flex space-x-6">
+                    <a href="/" class="hover:text-blue-200 transition-all font-medium">Dashboard</a>
+                    <a href="/register" class="hover:text-blue-200 transition-all font-medium">Registration</a>
+                    <a href="/attendance/live" class="hover:text-blue-200 transition-all font-medium">Live View</a>
+                </div>
+                <div class="flex items-center">
+                    <div id="bt-status" class="flex items-center space-x-2 bg-blue-900 px-3 py-1 rounded-full text-xs">
+                        <div id="bt-dot" class="w-2 h-2 rounded-full bg-gray-400"></div>
+                        <span id="bt-text">Checking BT...</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main class="flex-grow container mx-auto px-4 py-8 max-w-7xl">
+        {% block content %}{% endblock %}
+    </main>
+
+    <footer class="bg-white border-t border-gray-200 py-6 text-center text-gray-500 text-sm">
+        &copy; 2026 Bluetooth Classroom Attendance System
+    </footer>
+
+    <!-- Toast Notification -->
+    <div id="toast" class="fixed bottom-5 right-5 transform translate-y-20 opacity-0 transition-all duration-300 z-50">
+        <div id="toast-content" class="px-6 py-3 rounded-lg shadow-2xl text-white font-medium flex items-center space-x-3">
+            <span id="toast-msg"></span>
+        </div>
+    </div>
+
+    <script src="/static/app.js"></script>
+    <script>
+        // Check health on load
+        fetch('/api/health')
+            .then(r => r.json())
+            .then(data => {
+                const dot = document.getElementById('bt-dot');
+                const text = document.getElementById('bt-text');
+                if (data.bluetooth) {
+                    dot.classList.remove('bg-gray-400');
+                    dot.classList.add('bg-green-500');
+                    text.innerText = 'BT Active';
+                } else {
+                    dot.classList.remove('bg-gray-400');
+                    dot.classList.add('bg-red-500');
+                    text.innerText = 'BT Error';
+                }
+            });
+    </script>
+</body>
+</html>
